@@ -7,60 +7,74 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '.prisma/client';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { UserEntity } from './entity/user.entity';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   async create(
     @Body() createUserDto: CreateUserDto,
-  ): Promise<Omit<User, 'password_hash'>> {
+  ): Promise<{ user: UserEntity }> {
     const user = await this.userService.create(createUserDto);
-    delete user.password_hash;
-    return user;
+    return {
+      user: new UserEntity(user),
+    };
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async findAll(): Promise<Omit<User, 'password_hash'>[]> {
     const users = await this.userService.findAll({});
-    users.map((user) => {
-      delete user.password_hash;
-      return user;
+    const serializedUsers: UserEntity[] = users.map((user) => {
+      return new UserEntity(user);
     });
-    return users;
+    return serializedUsers;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':uuid')
   async findOne(
     @Param('uuid', ParseUUIDPipe) uuid: string,
-  ): Promise<Omit<User, 'password_hash'>> {
+  ): Promise<{ user: UserEntity }> {
     const user = await this.userService.findOne(uuid);
-    delete user.password_hash;
-    return user;
+    return {
+      user: new UserEntity(user),
+    };
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(JwtAuthGuard)
   @Patch(':uuid')
   async update(
     @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<Omit<User, 'password_hash'>> {
+  ): Promise<{ user: UserEntity }> {
     const user = await this.userService.update(uuid, updateUserDto);
-    delete user.password_hash;
-    return user;
+    return {
+      user: new UserEntity(user),
+    };
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Delete(':uuid')
   async remove(
     @Param('uuid', ParseUUIDPipe) uuid: string,
-  ): Promise<Omit<User, 'password_hash'>> {
+  ): Promise<{ user: UserEntity }> {
     const user = await this.userService.remove(uuid);
-    delete user.password_hash;
-    return user;
+    return {
+      user: new UserEntity(user),
+    };
   }
 }
