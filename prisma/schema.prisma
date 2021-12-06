@@ -8,11 +8,23 @@ datasource db {
 }
 
 model User {
-  uuid          String   @id @default(uuid())
+  uuid          String    @id @default(uuid())
   name          String
-  email         String   @unique
-  birthday      DateTime @db.Date
+  email         String    @unique
+  birthday      DateTime  @db.Date
   bio           String
   country       String
   password_hash String
+  Article       Article[]
+}
+
+model Article {
+  uuid             String   @id @default(uuid())
+  title            String
+  description      String
+  content          String
+  likes            BigInt
+  publication_date DateTime @db.Date
+  author           User     @relation(fields: [author_uuid], references: [uuid])
+  author_uuid      String   @unique
 }
