@@ -37,6 +37,9 @@ export class CommentService {
   async findOne(uuid: string): Promise<Comment> {
     return await this.prisma.comment.findUnique({
       where: { uuid },
+      include: {
+        likes: true,
+      },
     });
   }
 
