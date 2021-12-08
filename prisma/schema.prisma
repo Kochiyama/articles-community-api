@@ -8,23 +8,55 @@ datasource db {
 }
 
 model User {
-  uuid          String    @id @default(uuid())
+  uuid          String        @id @default(uuid())
   name          String
-  email         String    @unique
-  birthday      DateTime  @db.Date
+  email         String        @unique
+  birthday      DateTime      @db.Date
   bio           String
   country       String
   password_hash String
   articles      Article[]
+  comments      Comment[]
+  comment_likes CommentLike[]
+  article_likes ArticleLike[]
+
 }
 
 model Article {
-  uuid             String   @id @default(uuid())
+  uuid             String        @id @default(uuid())
   title            String
   description      String
   content          String
-  likes            Int
-  publication_date DateTime @db.Date
-  author           User     @relation(fields: [author_uuid], references: [uuid])
+  publication_date DateTime      @db.Date
+  author           User          @relation(fields: [author_uuid], references: [uuid])
   author_uuid      String
+  likes            ArticleLike[]
+  comments         Comment[]
+}
+
+model Comment {
+  uuid         String        @id @default(uuid())
+  article      Article       @relation(fields: [article_uuid], references: [uuid])
+  article_uuid String
+  user         User          @relation(fields: [user_uuid], references: [uuid])
+  user_uuid    String
+  comment      String
+  likes        CommentLike[]
+  date         DateTime      @db.Date
+}
+
+model ArticleLike {
+  uuid         String  @id @default(uuid())
+  user         User    @relation(fields: [user_uuid], references: [uuid])
+  user_uuid    String
+  article      Article @relation(fields: [article_uuid], references: [uuid])
+  article_uuid String
+}
+
+model CommentLike {
+  uuid         String  @id @default(uuid())
+  user         User    @relation(fields: [user_uuid], references: [uuid])
+  user_uuid    String
+  comment      Comment @relation(fields: [comment_uuid], references: [uuid])
+  comment_uuid String
 }

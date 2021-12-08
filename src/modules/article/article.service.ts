@@ -19,7 +19,6 @@ export class ArticleService {
         title: data.title,
         description: data.description,
         content: data.content,
-        likes: 0,
         publication_date: new Date(),
       },
     });
@@ -41,6 +40,10 @@ export class ArticleService {
     return await this.prisma.article.findUnique({
       where: {
         uuid,
+      },
+      include: {
+        likes: true,
+        comments: true,
       },
     });
   }
