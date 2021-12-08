@@ -23,35 +23,52 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(
+  async create(
     @Req() req: Request,
     @Body() createCommentDto: CreateCommentDto,
-  ): Promise<Comment> {
-    return this.commentService.create(req.user['uuid'], createCommentDto);
+  ): Promise<{ comment: Comment }> {
+    return {
+      comment: await this.commentService.create(
+        req.user['uuid'],
+        createCommentDto,
+      ),
+    };
   }
 
   @Get()
-  findAll(): Promise<Comment[]> {
-    return this.commentService.findAll({});
+  async findAll(): Promise<{ comments: Comment[] }> {
+    return {
+      comments: await this.commentService.findAll({}),
+    };
   }
 
   @Get(':uuid')
-  findOne(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<Comment> {
-    return this.commentService.findOne(uuid);
+  async findOne(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+  ): Promise<{ comment: Comment }> {
+    return {
+      comment: await this.commentService.findOne(uuid),
+    };
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':uuid')
-  update(
+  async update(
     @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() updateCommentDto: UpdateCommentDto,
-  ): Promise<Comment> {
-    return this.commentService.update(uuid, updateCommentDto);
+  ): Promise<{ updated_comment: Comment }> {
+    return {
+      updated_comment: await this.commentService.update(uuid, updateCommentDto),
+    };
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':uuid')
-  remove(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<Comment> {
-    return this.commentService.remove(uuid);
+  async remove(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+  ): Promise<{ deleted_comment: Comment }> {
+    return {
+      deleted_comment: await this.commentService.remove(uuid),
+    };
   }
 }
