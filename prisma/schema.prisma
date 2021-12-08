@@ -28,7 +28,7 @@ model Article {
   description      String
   content          String
   publication_date DateTime      @db.Timestamptz
-  author           User          @relation(fields: [author_uuid], references: [uuid])
+  author           User          @relation(fields: [author_uuid], references: [uuid], onDelete: Cascade)
   author_uuid      String
   likes            ArticleLike[]
   comments         Comment[]
@@ -36,9 +36,9 @@ model Article {
 
 model Comment {
   uuid         String        @id @default(uuid())
-  article      Article       @relation(fields: [article_uuid], references: [uuid])
+  article      Article       @relation(fields: [article_uuid], references: [uuid], onDelete: Cascade)
   article_uuid String
-  user         User          @relation(fields: [user_uuid], references: [uuid])
+  user         User          @relation(fields: [user_uuid], references: [uuid], onDelete: Cascade)
   user_uuid    String
   comment      String
   likes        CommentLike[]
@@ -47,16 +47,16 @@ model Comment {
 
 model ArticleLike {
   uuid         String  @id @default(uuid())
-  user         User    @relation(fields: [user_uuid], references: [uuid])
+  user         User    @relation(fields: [user_uuid], references: [uuid], onDelete: Cascade)
   user_uuid    String
-  article      Article @relation(fields: [article_uuid], references: [uuid])
+  article      Article @relation(fields: [article_uuid], references: [uuid], onDelete: Cascade)
   article_uuid String
 }
 
 model CommentLike {
   uuid         String  @id @default(uuid())
-  user         User    @relation(fields: [user_uuid], references: [uuid])
+  user         User    @relation(fields: [user_uuid], references: [uuid], onDelete: Cascade)
   user_uuid    String
-  comment      Comment @relation(fields: [comment_uuid], references: [uuid])
+  comment      Comment @relation(fields: [comment_uuid], references: [uuid], onDelete: Cascade)
   comment_uuid String
 }
