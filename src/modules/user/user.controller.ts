@@ -14,7 +14,6 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from '.prisma/client';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { UserEntity } from './entity/user.entity';
 
@@ -35,12 +34,15 @@ export class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  async findAll(): Promise<Omit<User, 'password_hash'>[]> {
+  async findAll(): Promise<{ users: UserEntity[] }> {
     const users = await this.userService.findAll({});
     const serializedUsers: UserEntity[] = users.map((user) => {
       return new UserEntity(user);
     });
-    return serializedUsers;
+
+    return {
+      users: serializedUsers,
+    };
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -60,10 +62,10 @@ export class UserController {
   async update(
     @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<{ user: UserEntity }> {
+  ): Promise<{ updated_user: UserEntity }> {
     const user = await this.userService.update(uuid, updateUserDto);
     return {
-      user: new UserEntity(user),
+      updated_user: new UserEntity(user),
     };
   }
 
@@ -71,10 +73,10 @@ export class UserController {
   @Delete(':uuid')
   async remove(
     @Param('uuid', ParseUUIDPipe) uuid: string,
-  ): Promise<{ user: UserEntity }> {
+  ): Promise<{ deleted_user: UserEntity }> {
     const user = await this.userService.remove(uuid);
     return {
-      user: new UserEntity(user),
+      deleted_user: new UserEntity(user),
     };
   }
 }
