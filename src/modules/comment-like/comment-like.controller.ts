@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CommentLikeService } from './comment-like.service';
@@ -18,6 +19,7 @@ export class CommentLikeController {
   constructor(private readonly commentLikeService: CommentLikeService) {}
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(
     @Req() req: Request,
@@ -32,6 +34,7 @@ export class CommentLikeController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':uuid')
   async remove(
     @Req() req: Request,

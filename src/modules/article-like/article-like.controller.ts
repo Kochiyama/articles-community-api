@@ -7,6 +7,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { ArticleLikeService } from './article-like.service';
@@ -17,6 +18,7 @@ export class ArticleLikeController {
   constructor(private readonly articleLikeService: ArticleLikeService) {}
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(
     @Req() req: Request,
@@ -31,6 +33,7 @@ export class ArticleLikeController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':uuid')
   async remove(@Req() req: Request, @Param('uuid') uuid: string) {
     return {
