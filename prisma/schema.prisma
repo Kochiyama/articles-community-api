@@ -11,7 +11,7 @@ model User {
   uuid          String        @id @default(uuid())
   name          String
   email         String        @unique
-  birthday      DateTime      @db.Date
+  birthday      DateTime      @db.Timestamptz
   bio           String
   country       String
   password_hash String
@@ -27,7 +27,7 @@ model Article {
   title            String
   description      String
   content          String
-  publication_date DateTime      @db.Date
+  publication_date DateTime      @db.Timestamptz
   author           User          @relation(fields: [author_uuid], references: [uuid])
   author_uuid      String
   likes            ArticleLike[]
@@ -42,7 +42,7 @@ model Comment {
   user_uuid    String
   comment      String
   likes        CommentLike[]
-  date         DateTime      @db.Date
+  date         DateTime      @db.Timestamptz
 }
 
 model ArticleLike {
