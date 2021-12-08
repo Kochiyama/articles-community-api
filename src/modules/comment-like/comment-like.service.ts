@@ -26,9 +26,20 @@ export class CommentLikeService {
     });
   }
 
-  remove(uuid: string) {
+  async remove(user_uuid: string, uuid: string) {
+    const existentCommentLike = await this.prisma.commentLike.findFirst({
+      where: {
+        user_uuid,
+        comment_uuid: uuid,
+      },
+    });
+
+    if (!existentCommentLike) {
+      throw new HttpException('Like not found', HttpStatus.BAD_REQUEST);
+    }
+
     return this.prisma.commentLike.delete({
-      where: { uuid },
+      where: { uuid: existentCommentLike.uuid },
     });
   }
 }

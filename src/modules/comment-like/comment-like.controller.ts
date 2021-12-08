@@ -19,19 +19,29 @@ export class CommentLikeController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(
+  async create(
     @Req() req: Request,
     @Body() createCommentLikeDto: CreateCommentLikeDto,
   ) {
-    return this.commentLikeService.create(
-      req.user['uuid'],
-      createCommentLikeDto,
-    );
+    return {
+      comment_like: await this.commentLikeService.create(
+        req.user['uuid'],
+        createCommentLikeDto,
+      ),
+    };
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':uuid')
-  remove(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.commentLikeService.remove(uuid);
+  async remove(
+    @Req() req: Request,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+  ) {
+    return {
+      deleted_comment_like: await this.commentLikeService.remove(
+        req.user['uuid'],
+        uuid,
+      ),
+    };
   }
 }
