@@ -26,10 +26,13 @@ export class ArticleLikeService {
     });
   }
 
-  async remove(uuid: string) {
-    const existentArticleLike = await this.prisma.articleLike.findUnique({
+  async remove(user_uuid: string, article_uuid: string) {
+    console.log({ user_uuid, article_uuid });
+
+    const existentArticleLike = await this.prisma.articleLike.findFirst({
       where: {
-        uuid,
+        user_uuid,
+        article_uuid,
       },
     });
 
@@ -38,7 +41,7 @@ export class ArticleLikeService {
     }
 
     return await this.prisma.articleLike.delete({
-      where: { uuid },
+      where: { uuid: existentArticleLike.uuid },
     });
   }
 }

@@ -18,19 +18,26 @@ export class ArticleLikeController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(
+  async create(
     @Req() req: Request,
     @Body() createArticleLikeDto: CreateArticleLikeDto,
   ) {
-    return this.articleLikeService.create(
-      req.user['uuid'],
-      createArticleLikeDto,
-    );
+    return {
+      article_like: await this.articleLikeService.create(
+        req.user['uuid'],
+        createArticleLikeDto,
+      ),
+    };
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':uuid')
-  remove(@Param('uuid') uuid: string) {
-    return this.articleLikeService.remove(uuid);
+  async remove(@Req() req: Request, @Param('uuid') uuid: string) {
+    return {
+      deleted_article_like: await this.articleLikeService.remove(
+        req.user['uuid'],
+        uuid,
+      ),
+    };
   }
 }
