@@ -54,6 +54,9 @@ export class UserService {
       where: {
         uuid,
       },
+      include: {
+        articles: true,
+      },
     });
   }
 

@@ -15,7 +15,7 @@ model User {
   bio           String
   country       String
   password_hash String
-  Article       Article[]
+  articles      Article[]
 }
 
 model Article {
