@@ -1,26 +1,80 @@
-import { Injectable } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
+import { Article, Prisma } from '.prisma/client';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
 import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Injectable()
 export class ArticleService {
-  create(createArticleDto: CreateArticleDto) {
-    return 'This action adds a new article';
+  constructor(private prisma: PrismaService) {}
+
+  async create(data: {
+    user_uuid: string;
+    title: string;
+    description: string;
+    content: string;
+  }): Promise<Article> {
+    return await this.prisma.article.create({
+      data: {
+        author_uuid: data.user_uuid,
+        title: data.title,
+        description: data.description,
+        content: data.content,
+        likes: 0,
+        publication_date: new Date(),
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all article`;
+  async findAll(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.ArticleWhereUniqueInput;
+    where?: Prisma.ArticleWhereInput;
+    orderBy?: Prisma.ArticleOrderByWithRelationInput;
+  }): Promise<Article[]> {
+    return await this.prisma.article.findMany({
+      ...params,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} article`;
+  async findOne(uuid: string): Promise<Article> {
+    return await this.prisma.article.findUnique({
+      where: {
+        uuid,
+      },
+    });
   }
 
-  update(id: number, updateArticleDto: UpdateArticleDto) {
-    return `This action updates a #${id} article`;
+  async update(
+    uuid: string,
+    updateArticleDto: UpdateArticleDto,
+  ): Promise<Article> {
+    console.log(updateArticleDto);
+    const existentArticle = await this.prisma.article.findUnique({
+      where: { uuid },
+    });
+
+    if (!existentArticle) {
+      throw new HttpException('Article not found', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.prisma.article.update({
+      where: { uuid },
+      data: updateArticleDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} article`;
+  async remove(uuid: string): Promise<Article> {
+    const existentArticle = await this.prisma.article.findUnique({
+      where: { uuid },
+    });
+
+    if (!existentArticle) {
+      throw new HttpException('Article not found', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.prisma.article.delete({
+      where: { uuid },
+    });
   }
 }

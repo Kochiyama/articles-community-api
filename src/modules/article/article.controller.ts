@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  UseGuards,
+  ParseUUIDPipe,
+} from '@nestjs/common';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -7,28 +20,36 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articleService.create(createArticleDto);
+  create(@Req() request: Request, @Body() createArticleDto: CreateArticleDto) {
+    console.log(request.user);
+    return this.articleService.create({
+      ...createArticleDto,
+      user_uuid: request.user['uuid'],
+    });
   }
 
   @Get()
   findAll() {
-    return this.articleService.findAll();
+    return this.articleService.findAll({});
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.articleService.findOne(+id);
+  @Get(':uuid')
+  findOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.articleService.findOne(uuid);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
-    return this.articleService.update(+id, updateArticleDto);
+  @Patch(':uuid')
+  update(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() updateArticleDto: UpdateArticleDto,
+  ) {
+    return this.articleService.update(uuid, updateArticleDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.articleService.remove(+id);
+  @Delete(':uuid')
+  remove(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.articleService.remove(uuid);
   }
 }

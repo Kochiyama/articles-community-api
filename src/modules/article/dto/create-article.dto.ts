@@ -1,9 +1,6 @@
-import { IsDateString, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateArticleDto {
-  @IsUUID()
-  author_uuid: string;
-
   @IsString()
   title: string;
 
@@ -12,10 +9,4 @@ export class CreateArticleDto {
 
   @IsString()
   content: string;
-
-  @IsNumber()
-  likes: number;
-
-  @IsDateString()
-  publication_date: Date;
 }

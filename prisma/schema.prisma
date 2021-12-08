@@ -23,8 +23,8 @@ model Article {
   title            String
   description      String
   content          String
-  likes            BigInt
+  likes            Int
   publication_date DateTime @db.Date
   author           User     @relation(fields: [author_uuid], references: [uuid])
-  author_uuid      String   @unique
+  author_uuid      String
 }
