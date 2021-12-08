@@ -22,34 +22,46 @@ export class ArticleController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Req() request: Request, @Body() createArticleDto: CreateArticleDto) {
-    console.log(request.user);
-    return this.articleService.create({
-      ...createArticleDto,
-      user_uuid: request.user['uuid'],
-    });
+  async create(
+    @Req() request: Request,
+    @Body() createArticleDto: CreateArticleDto,
+  ) {
+    return {
+      article: await this.articleService.create({
+        ...createArticleDto,
+        user_uuid: request.user['uuid'],
+      }),
+    };
   }
 
   @Get()
-  findAll() {
-    return this.articleService.findAll({});
+  async findAll() {
+    return {
+      articles: await this.articleService.findAll({}),
+    };
   }
 
   @Get(':uuid')
-  findOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.articleService.findOne(uuid);
+  async findOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return {
+      article: await this.articleService.findOne(uuid),
+    };
   }
 
   @Patch(':uuid')
-  update(
+  async update(
     @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    return this.articleService.update(uuid, updateArticleDto);
+    return {
+      updated_article: await this.articleService.update(uuid, updateArticleDto),
+    };
   }
 
   @Delete(':uuid')
-  remove(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.articleService.remove(uuid);
+  async remove(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return {
+      deleted_article: await this.articleService.remove(uuid),
+    };
   }
 }
