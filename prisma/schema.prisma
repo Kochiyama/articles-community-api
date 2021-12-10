@@ -19,7 +19,6 @@ model User {
   comments      Comment[]
   comment_likes CommentLike[]
   article_likes ArticleLike[]
-
 }
 
 model Article {
