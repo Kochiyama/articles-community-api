@@ -11,15 +11,14 @@ model User {
   uuid          String        @id @default(uuid())
   name          String
   email         String        @unique
-  birthday      DateTime      @db.Timestamptz
-  bio           String
-  country       String
+  birthday      DateTime?      @db.Timestamptz
+  bio           String?
+  country       String?
   password_hash String
   articles      Article[]
   comments      Comment[]
   comment_likes CommentLike[]
   article_likes ArticleLike[]
-
 }
 
 model Article {

@@ -7,6 +7,13 @@ import { appConstants } from './common/constants/app';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://articles-community-web.vercel.app',
+    ],
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -26,6 +33,6 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(appConstants.port || 3000);
+  await app.listen(appConstants.port || 3030);
 }
 bootstrap();
