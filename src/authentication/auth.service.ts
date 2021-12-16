@@ -3,6 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/database/prisma.service';
+import { UserEntity } from 'src/modules/user/entity/user.entity';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
@@ -35,10 +36,11 @@ export class AuthService {
 
   async generateToken(
     user: Omit<User, 'password_hash'>,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; user: Omit<User, 'password_hash'> }> {
     const payload: JwtPayload = { email: user.email, uuid: user.uuid };
     return {
       access_token: this.jwtService.sign(payload),
+      user,
     };
   }
 }
